@@ -12,10 +12,19 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
   return hint ? <Tooltip title={hint}>{content}</Tooltip> : content;
 }
 
+const safeFixed = (v: any, digits = 1, fallback = '0') =>
+  Number.isFinite(Number(v)) ? Number(Number(v)).toFixed(digits) : fallback;
+
 export default function MetricsBar({ metricsOverride }: { metricsOverride?: Metrics }) {
   const { metrics } = useTasksContext();
   const m = metricsOverride ?? metrics;
   const { totalRevenue, timeEfficiencyPct, revenuePerHour, averageROI, performanceGrade, totalTimeTaken } = m;
+
+  const totalRevenueDisplay = Number.isFinite(Number(totalRevenue)) ? `$${Number(totalRevenue).toLocaleString()}` : '$0';
+  const timeEfficiencyDisplay = Number.isFinite(Number(timeEfficiencyPct)) ? `${Math.round(Number(timeEfficiencyPct))}%` : '0%';
+  const revenuePerHourDisplay = `$${safeFixed(revenuePerHour, 1, '0.0')}`;
+  const averageROIDisplay = safeFixed(averageROI, 1, '0.0');
+
   return (
     <Card>
       <CardContent>
@@ -30,15 +39,13 @@ export default function MetricsBar({ metricsOverride }: { metricsOverride?: Metr
             },
           }}
         >
-          <Stat label="Total Revenue" value={`$${totalRevenue.toLocaleString()}`} hint="Sum of revenue for Done tasks" />
-          <Stat label="Time Efficiency" value={`${timeEfficiencyPct.toFixed(0)}%`} hint="(Done / All) * 100" />
-          <Stat label="Revenue / Hour" value={`$${(Number.isFinite(revenuePerHour) ? revenuePerHour : 0).toFixed(1)}`} hint="Total revenue divided by total time" />
-          <Stat label="Average ROI" value={`${averageROI.toFixed(1)}`} hint="Mean of valid ROI values" />
-          <Stat label="Grade" value={`${performanceGrade}`} hint={`Based on Avg ROI (${averageROI.toFixed(1)}) • Total time ${totalTimeTaken}h`} />
+          <Stat label="Total Revenue" value={totalRevenueDisplay} hint="Sum of revenue for Done tasks" />
+          <Stat label="Time Efficiency" value={timeEfficiencyDisplay} hint="(Done / All) * 100" />
+          <Stat label="Revenue / Hour" value={revenuePerHourDisplay} hint="Total revenue divided by total time" />
+          <Stat label="Average ROI" value={averageROIDisplay} hint="Mean of valid ROI values" />
+          <Stat label="Grade" value={`${performanceGrade ?? '—'}`} hint={`Based on Avg ROI (${averageROIDisplay}) • Total time ${totalTimeTaken ?? 0}h`} />
         </Box>
       </CardContent>
     </Card>
   );
 }
-
-
