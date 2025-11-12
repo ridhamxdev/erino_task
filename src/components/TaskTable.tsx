@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import TaskForm from './TaskForm';
 import TaskDetailsDialog from './TaskDetailsDialog';
-import { Task, DerivedTask } from '../types';
+import { Task, DerivedTask } from '../types'; 
 
 interface Props {
   tasks: DerivedTask[];
@@ -77,7 +77,7 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
                           variant="caption"
                           color="text.secondary"
                           noWrap
-                          title={t.notes} // full notes on hover
+                          title={t.notes}
                         >
                           {t.notes}
                         </Typography>
